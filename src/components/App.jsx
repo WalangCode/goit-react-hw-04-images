@@ -6,42 +6,41 @@ import Loader from './Loader/Loader';
 import { getAPI } from 'pixabay-api';
 import styles from './App.module.css';
 import { TailSpin } from 'react-loader-spinner';
-import { Toaster,toast } from 'react-hot-toast';
-
-
+import { Toaster, toast } from 'react-hot-toast';
 
 function App() {
-const [images, setImages]=useState([]);
-const [currentPage, setCurrentPage]=useState(1);
-const [searchQuery, setSearchQuery]=useState('');
-const [isLoading, setIsLoading]=useState(false);
-const [isError, setIsError]=useState(false);
-const [isEnd, setIsEnd] = useState(false);
+  const [images, setImages] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [isError, setIsError] = useState(false);
+  const [isEnd, setIsEnd] = useState(false);
 
-const fetchImages=useCallback(async()=>{
-  setIsLoading(true);
-  try {
-    const response= await getAPI(searchQuery, currentPage);
-    const {totalHits, hits}=response;
-
-    setImages(prevImages => currentPage===1 ? hits: [...prevImages,...hits]);
-
-    setIsEnd(prevImages => prevImages.length + hits.length >= totalHits);
-
-    if (hits.length ===0){
-     
-      toast.error('No images found. Try a different serach. ')
-    }
-  } catch (error) {
+  const fetchImages = useCallback(async () => {
     setIsLoading(false);
-    setIsError(true);
-    alert(`An error occurred while fetching data: ${error}`);
-  }finally {
+    try {
+      const response = await getAPI(searchQuery, currentPage);
+      const { totalHits, hits } = response;
+
+      setImages(prevImages =>
+        currentPage === 1 ? hits : [...prevImages, ...hits]
+      );
+
+      setIsEnd(prevImages => prevImages.length + hits.length >= totalHits);
+
+      if (hits.length === 0) {
+        toast.error('No images found. Try a different serach. ');
+      }
+    } catch (error) {
+      setIsLoading(false);
+      setIsError(true);
+      alert(`An error occurred while fetching data: ${error}`);
+    } finally {
       setIsLoading(false);
     }
-},[searchQuery,currentPage]);
+  }, [searchQuery, currentPage]);
 
- useEffect(() => {
+  useEffect(() => {
     if (searchQuery) {
       fetchImages();
     }
@@ -56,7 +55,9 @@ const fetchImages=useCallback(async()=>{
     }
 
     if (normalizedQuery === searchQuery.toLowerCase()) {
-      alert('Search query is the same as the previous one. Please provide a new search query.');
+      alert(
+        'Search query is the same as the previous one. Please provide a new search query.'
+      );
       return;
     }
 
@@ -77,36 +78,33 @@ const fetchImages=useCallback(async()=>{
   return (
     <div className={styles.App}>
       <SearchBar onSubmit={handleSearchSubmit} />
-      <Toaster
-  position="top-center"
-  reverseOrder={false}
-/>
+      <Toaster position="top-center" reverseOrder={false} />
 
-     <TailSpin
-      visible={true}
-           height="80"
-           width="80"
-           color="#4fa94d"
-           ariaLabel="tail-spin-loading"
-           radius="1"
-           wrapperStyle={{}}
-           wrapperClass=""
-       />
-      
+      <TailSpin
+        visible={true}
+        height="80"
+        width="80"
+        color="#4fa94d"
+        ariaLabel="tail-spin-loading"
+        radius="1"
+        wrapperStyle={{}}
+        wrapperClass=""
+      />
+
       <Loader visible={isLoading} height="80" width="80" color="#4fa94d" />
-      
+
       <ImageGallery images={images} />
-      
+
       {!isLoading && !isError && images.length > 0 && !isEnd && (
         <Button onClick={handleLoadMore} />
       )}
-      
+
       {isError && <p>Something went wrong. Please try again later.</p>}
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
 // class App extends Component {
 //   state = {
 //     images: [],
@@ -194,9 +192,9 @@ export default App
 //     const { images, isLoading, isError, isEnd } = this.state;
 //     return (
 //       <div className={styles.App}>
-        
+
 //         <SearchBar onSubmit={this.handleSearchSubmit} />
-        
+
 //         <TailSpin
 //           visible={true}
 //           height="80"
@@ -207,8 +205,7 @@ export default App
 //           wrapperStyle={{}}
 //           wrapperClass=""
 //         />
-        
-        
+
 //         <ImageGallery images={images} />
 //         {isLoading && <Loader />}
 //         {!isLoading && !isError && images.length > 0 && !isEnd && (

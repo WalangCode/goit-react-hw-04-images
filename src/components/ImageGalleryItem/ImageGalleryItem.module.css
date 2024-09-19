@@ -26,5 +26,5 @@
 
 .galleryItem:hover img {
   transform: scale(1.05);
-  border-color: #ff85a2;
+  border-color: #d10202;
 }
